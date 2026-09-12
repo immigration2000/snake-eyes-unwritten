@@ -2,7 +2,8 @@
 에셋 일괄 생성 (diffusers, SDXL 계열). scripts/asset_prompts.json 의 프롬프트로
 raw-assets/<종류>/<키>.png 를 만든다. 이후 prep_assets.py 로 게임 규격에 맞춘다.
 
-사용법:
+사용법 (torch+diffusers 가 있는 파이썬으로 — 이 PC 에선 ../StableDiffusion/venv):
+  ../StableDiffusion/venv/Scripts/python.exe scripts/gen_assets.py
   python scripts/gen_assets.py                      # 전부
   python scripts/gen_assets.py --kind bg            # 배경만
   python scripts/gen_assets.py --kind cg --keys ch08_wish,ch16_gift
@@ -57,6 +58,7 @@ def main() -> int:
     ap.add_argument("--n", type=int, default=1, help="키당 장수")
     ap.add_argument("--overwrite", action="store_true")
     ap.add_argument("--dry-run", action="store_true", help="프롬프트만 출력")
+    ap.add_argument("--offload", action="store_true", help="VRAM 부족 시 CPU 오프로드 강제")
     args = ap.parse_args()
 
     spec = json.loads(PROMPTS.read_text(encoding="utf-8"))
@@ -88,7 +90,14 @@ def main() -> int:
         pipe = StableDiffusionXLPipeline.from_single_file(args.model, torch_dtype=torch.float16)
     else:
         pipe = StableDiffusionXLPipeline.from_pretrained(args.model, torch_dtype=torch.float16, use_safetensors=True)
-    pipe.to("cuda")
+    # VRAM 이 넉넉하면 전부 GPU 에, 아니면(다른 앱이 쓰는 중 등) 모듈별 오프로드
+    free_gb = torch.cuda.mem_get_info()[0] / 1e9
+    if args.offload or free_gb < 9:
+        print(f"여유 VRAM {free_gb:.1f}GB → model_cpu_offload 사용 (느리지만 안전)")
+        pipe.enable_model_cpu_offload()
+    else:
+        pipe.to("cuda")
+    pipe.enable_vae_slicing()
 
     for i, (kind, key, prompt, size) in enumerate(jobs, 1):
         outdir = OUT / kind
@@ -104,7 +113,7 @@ def main() -> int:
             print(f"[{i}/{len(jobs)}] {kind}/{name}  seed={seed}")
             img = pipe(
                 prompt=prompt,
-                negative_prompt=spec["negative"],
+                negative_prompt=", ".join(x for x in [spec["negative"], spec[kind].get("negative", "")] if x),
                 width=size[0],
                 height=size[1],
                 num_inference_steps=args.steps,

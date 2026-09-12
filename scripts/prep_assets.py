@@ -48,19 +48,27 @@ def cover(img: Image.Image, size: tuple[int, int]) -> Image.Image:
     return img.crop((left, top, left + tw, top + th))
 
 
-def remove_bg(img: Image.Image) -> Image.Image:
+# 배경 제거 모델. 기본 isnet-anime, 잘 안 되는 키만 u2net 으로
+REMBG_MODEL = {"baelz_cold": "u2net"}
+_sessions: dict = {}
+
+
+def remove_bg(img: Image.Image, key: str) -> Image.Image:
     try:
-        from rembg import remove
+        from rembg import new_session, remove
     except ImportError:
         print("  (rembg 없음 — 배경 제거 건너뜀. pip install rembg)")
         return img.convert("RGBA")
-    return remove(img)
+    model = REMBG_MODEL.get(key, "isnet-anime")
+    if model not in _sessions:
+        _sessions[model] = new_session(model)
+    return remove(img, session=_sessions[model])
 
 
 def prep_sprite(src: Path, dst: Path, use_rembg: bool) -> None:
     img = Image.open(src)
     if use_rembg and img.mode != "RGBA":
-        img = remove_bg(img)
+        img = remove_bg(img, src.stem)
     img = img.convert("RGBA")
     bbox = img.getbbox()
     if bbox:

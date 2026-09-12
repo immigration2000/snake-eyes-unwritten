@@ -72,12 +72,13 @@ export class ChapterScene extends Phaser.Scene implements StageHooks {
     this.cameras.main.setBounds(0, 0, worldW, GAME_HEIGHT);
     this.physics.world.setBounds(0, 0, worldW, GAME_HEIGHT);
 
-    // 배경 (약한 패럴랙스)
+    // 배경 (약한 패럴랙스) — 비율 유지한 채 카메라 이동분만큼 키우고 세로는 가운데 크롭
+    const bgScale = (Math.max(0, worldW - GAME_WIDTH) * 0.15 + GAME_WIDTH) / GAME_WIDTH;
     this.bg = this.add
-      .image(0, 0, `bg_${ch.bg}`)
-      .setOrigin(0)
+      .image(0, GAME_HEIGHT / 2, `bg_${ch.bg}`)
+      .setOrigin(0, 0.5)
       .setScrollFactor(0.15)
-      .setDisplaySize(worldW * 0.15 + GAME_WIDTH, GAME_HEIGHT);
+      .setScale(bgScale);
 
     if (ch.world) this.buildWorld(ch.world.width, ch.world.spawn);
 
@@ -158,6 +159,8 @@ export class ChapterScene extends Phaser.Scene implements StageHooks {
             fontFamily: FONTS.mono,
             fontSize: "12px",
             color: PALETTE_CSS.bone,
+            stroke: PALETTE_CSS.ink,
+            strokeThickness: 3,
           })
           .setOrigin(0.5)
           .setDepth(20)
@@ -210,8 +213,11 @@ export class ChapterScene extends Phaser.Scene implements StageHooks {
       .text(16, 12, `${PART_NAMES[ch.part] ?? ""}  ·  ${this.chapterNumber()} ${ch.title}`, {
         fontFamily: FONTS.mono,
         fontSize: "11px",
-        color: PALETTE_CSS.mute,
+        color: PALETTE_CSS.bone,
+        stroke: PALETTE_CSS.ink,
+        strokeThickness: 3,
       })
+      .setAlpha(0.8)
       .setScrollFactor(0)
       .setDepth(900);
 
@@ -223,8 +229,11 @@ export class ChapterScene extends Phaser.Scene implements StageHooks {
         .text(GAME_WIDTH - 16, 12, hint, {
           fontFamily: FONTS.mono,
           fontSize: "11px",
-          color: PALETTE_CSS.mute,
+          color: PALETTE_CSS.bone,
+          stroke: PALETTE_CSS.ink,
+          strokeThickness: 3,
         })
+        .setAlpha(0.7)
         .setOrigin(1, 0)
         .setScrollFactor(0)
         .setDepth(900);

@@ -3,34 +3,42 @@
   "prefix": "masterpiece, best quality, newest, absurdres, highly detailed, painterly anime style, dark fairytale, muted palette with red and cyan accents, cinematic lighting",
   "negative": "worst quality, low quality, bad anatomy, bad hands, extra digits, text, watermark, signature, blurry, deformed, censored, nsfw",
   "bg": {
-    "size": [1344, 768],
+    "size": [
+      1344,
+      768
+    ],
     "items": {
-      "forest": "misty forest clearing at dusk, no people, empty, soft dappled light, lonely fairytale mood, wide landscape",
-      "valley": "hidden valley town in a bowl of green hills, cozy diverse rooftops, warm golden hour, no people, wide establishing shot",
+      "forest": "misty forest clearing at dusk, old tall trees, fog, soft dappled light, lonely fairytale mood, empty clearing, wide shot",
+      "valley": "small town in a mountain valley, many houses, rooftops, chimneys, cobblestone streets, warm golden hour, seen from above on a hillside",
       "gate": "great stone gate at the entrance of a hidden town, dusk, torch glow, no people, atmospheric",
-      "palace": "dim candlelit stone side-palace interior, baroque, heavy shadows, empty, ominous, no people",
+      "palace": "dim small palace chamber lit by a few candles, stone walls, heavy shadows, an old wooden cradle, baroque details, ominous quiet, empty, no people",
       "square": "old kingdom market square, cobblestones, wooden stalls, overcast, empty, no people",
-      "scaffold": "grim empty execution scaffold in a town square, grey overcast sky, foreboding, no people, muted",
+      "scaffold": "gallows, wooden execution platform in the middle of a town square, medieval town, overcast grey sky, foreboding, muted colors",
       "ruin": "vast grey ruins of a destroyed kingdom, ash and broken stone, empty silent, overcast, melancholic, wide",
       "town": "poor outskirts village dirt road, worn huts, dusk, empty, no people, quiet",
       "room": "cozy dim room lit by a single candle, wooden desk with an open notebook, intimate, no people, warm shadows",
       "rooftop": "rooftop view over a glowing town at night, warm lights below, starry sky, no people, cozy",
-      "hill": "windswept grassy hill overlooking distant grey ruins on the horizon, vast overcast sky, no people, melancholic",
-      "dark": "almost pitch black room, faint blue moonlight through a window, empty, intimate darkness, no people"
-    }
+      "hill": "grassy windswept hilltop in the foreground, far below in the distance a grey dead ruined city under a vast overcast sky, melancholic, empty, no people, wide",
+      "dark": "very dark room at night, darkness, low key lighting, black background, only a faint blue moonbeam from a small window, empty room"
+    },
+    "negative": "people, person, 1girl, 1boy, figure, character, silhouette, crowd",
+    "suffix": "scenery, no humans, landscape"
   },
   "sprites": {
-    "size": [832, 1216],
-    "suffix": "solo, full body, standing, facing viewer, simple background, white background",
-    "baelz_tags": "hakos baelz, 1girl, slit pupils, snake eyes, red hair, white streaked bangs, twintails, red mouse ears, x hair ornament",
-    "twin_tags": "identical twin dancer, sleek black bodysuit, black mouse ears, opaque visor mask covering eyes, thigh high boots",
-    "twin_bare_tags": "identical twin dancer, sleek black bodysuit, black mouse ears, no mask, thigh high boots",
+    "size": [
+      832,
+      1216
+    ],
+    "suffix": "solo, full body, standing, looking at viewer, simple background, white background",
+    "baelz_tags": "hakos baelz, 1girl, slit pupils, snake eyes, red hair, white streaked bangs, twintails, red mouse ears, x hair ornament, full body, standing, straight-on",
+    "twin_tags": "full body, standing, 1girl, dancer, black bodysuit, latex, black mouse ears, visor, covered eyes, thigh boots",
+    "twin_bare_tags": "full body, standing, 1girl, dancer, black bodysuit, latex, black mouse ears, thigh boots, face visible, no mask",
     "items": {
       "baelz_child": "{baelz} child, aged down, small child, fully clothed, curious smile",
       "baelz_child_cold": "{baelz} child, aged down, small child, fully clothed, cold empty expression, dead calm, dark rim light",
       "baelz_child_cry": "{baelz} child, aged down, small child, fully clothed, teary eyes, trembling, vulnerable",
-      "baelz_veiled": "{baelz} child, aged down, small child, fully clothed, head fully covered by plain white cloth veil, face hidden",
-      "baelz": "{baelz} teenager, cheerful mischievous smile, hands on hips",
+      "baelz_veiled": "{baelz} small child, fully clothed, head and face completely covered by a plain white cloth veil, veil, faceless",
+      "baelz": "{baelz} teenager, cheerful mischievous smile, hands on hips, black crop top, white ruffle jacket, white cargo pants",
       "baelz_cold": "{baelz} teenager, cold empty expression, dead calm, menacing, dark rim light",
       "baelz_cry": "{baelz} teenager, teary eyes, holding back tears, trembling, vulnerable",
       "risa": "{twin} amber gold accents, star and stud motifs, cheerful energetic pose",
@@ -47,33 +55,43 @@
       "horn_boy": "1boy, small child, torn nightclothes, one broken horn with dried blood, timid, trembling",
       "scale_boy": "1boy, small child, iridescent scales on hands and neck, tattered clothes, frightened",
       "scale_woman": "1woman, middle-aged, iridescent scales on hands, simple homespun dress, tired gentle face",
-      "elder": "1man, elderly, curled horns, market vendor apron, warm wrinkled smile",
+      "elder": "1boy, old man, elderly, mature male, beard, curled horns, horns, vendor apron, warm wrinkled smile",
       "agent": "1other, dark cloaked agent, hooded, black clothes, quiet watchful posture"
-    }
+    },
+    "negative": "multiple girls, 2girls, multiple boys, cropped, close-up, portrait, upper body, cowboy shot, bust, face focus, grid, split screen, 2koma, scenery, indoors, outdoors, landscape, monster, creature, chibi"
   },
   "cg": {
-    "size": [1344, 768],
+    "size": [
+      1344,
+      768
+    ],
     "items": {
-      "ch02_forest_child": "child baelz crouching in a sunlit forest clearing, drawing in the dirt with a stick, looking up curiously, dappled light, slit pupils visible, gentle wholesome mood",
+      "ch02_forest_child": "hakos baelz, 1girl, child, aged down, red hair, twintails, mouse ears, slit pupils, crouching in a sunlit forest clearing, drawing in the dirt with a stick, looking up curiously, dappled light, gentle wholesome mood",
       "ch04_prophecy": "a king shielding a newborn with snake eyes from a fearful court, candlelit throne hall, shadows recoiling, baroque, ominous",
       "ch05_escape": "two masked twins carrying a small veil-less child through dark castle corridors at night, torchlight of pursuing soldiers behind, tense escape, motion",
       "ch06_veil": "veiled child figure kneeling by a sick child's bedside at night, single candle, holding a small painted pebble, tender, warm shadows",
       "ch07_unveiled": "market square, a veil torn away revealing a child's glowing snake eyes, crowd recoiling in fear, a small gap-toothed girl hiding behind her mother, heartbreak, harsh torchlight",
-      "ch08_wish": "small child rising from mud, snake eyes blazing, chaos energy swirling red and cyan, two awakening figures behind her, a kingdom crumbling in the distance, epic, mythic, dark",
-      "ch09_rooftop": "baelz and a hooded traveler sitting on a rooftop sharing skewered food, glowing nation below at night, two masked twins on the next roof, warm, cozy, found family",
-      "ch11_name": "baelz kneeling at eye level with a small trembling boy with one broken horn, dawn light, a dark-cloaked agent standing behind, great stone gate open in the background, hushed sacred moment",
-      "ch13_two_faces": "baelz turning cold and menacing, dead-calm expression, facing a cruel slaver, a frightened scaled boy on the ground, red and cyan rim light, tension, two-faced contrast",
-      "ch14_hill": "baelz standing small and silent on a windswept hill, overlooking distant grey ruins of a fallen kingdom, melancholy, muted, vast empty sky",
-      "ch15_bare": "dark room after candles go out, baelz curled between two twins who have removed their masks (faces shown), faint moonlight, a hooded traveler watching, intimate, tender",
-      "ch16_gift": "baelz holding a worn notebook with both hands, frozen on a page, eyes welling but refusing to cry, soft window light, emotional, quiet",
+      "ch08_wish": "hakos baelz, 1girl, child, red hair, twintails, mouse ears, glowing slit pupils, rising from mud, chaos energy swirling red and cyan, two figures behind her, a kingdom crumbling in the distance, epic, mythic, dark",
+      "ch09_rooftop": "hakos baelz, 1girl, red hair, twintails, mouse ears, sitting on a rooftop beside a hooded traveler, sharing skewered food, glowing town below at night, two masked figures on the next roof, warm, cozy, found family",
+      "ch11_name": "hakos baelz, 1girl, red hair, twintails, mouse ears, kneeling at eye level with a small trembling boy with one broken horn, dawn light, a dark-cloaked figure standing behind, great stone gate open in the background, hushed sacred moment",
+      "ch13_two_faces": "hakos baelz, 1girl, red hair, twintails, mouse ears, cold dead-calm expression, menacing, facing a cruel slaver with a whip, a frightened scaled boy on the ground, red and cyan rim light, tension",
+      "ch14_hill": "hakos baelz, 1girl, red hair, twintails, mouse ears, from behind, standing small and silent on a windswept hill, overlooking distant grey ruins of a fallen kingdom, melancholy, muted, vast empty sky",
+      "ch15_bare": "hakos baelz, 1girl, red hair, mouse ears, sleeping curled between two identical black-haired girls in black bodysuits, faces shown, no masks, dark room, faint moonlight, intimate, tender",
+      "ch16_gift": "hakos baelz, 1girl, red hair, twintails, mouse ears, slit pupils, holding a worn notebook with both hands, frozen on a page, eyes welling but refusing to cry, soft window light, emotional, quiet",
       "epilogue_pebble": "close-up of a worn notebook on a small wooden shelf beside a throne, a small clumsily painted pebble resting on top, soft golden light, no people, sentimental",
-      "epilogue_gate": "baelz at a great gate looking back over her shoulder, faint hopeful smile, a worn notebook on a shelf nearby, timeless, bittersweet golden light"
-    }
+      "epilogue_gate": "hakos baelz, 1girl, red hair, twintails, mouse ears, at a great stone gate, looking back over her shoulder, faint hopeful smile, timeless, bittersweet golden light"
+    },
+    "negative": "text, speech bubble, grid, split screen, 2koma, multiple views"
   },
   "ui": {
-    "size": [1344, 768],
+    "size": [
+      1344,
+      768
+    ],
     "items": {
-      "title": "hakos baelz, snake eyes, red hair twintails, standing at a great stone gate at dusk, looking back over shoulder, red and cyan rim light, dark fairytale key visual, lots of empty dark space at the top for a title, cinematic"
-    }
-  }
+      "title": "hakos baelz, 1girl, red hair, twintails, mouse ears, slit pupils, standing at a great stone gate at dusk, looking back over shoulder, red and cyan rim light, dark fairytale key visual, wide shot, lots of empty dark sky at the top, cinematic"
+    },
+    "negative": "text, letters, logo, watermark"
+  },
+  "_note": "종류별 negative 는 전역 negative 뒤에 붙는다."
 }
