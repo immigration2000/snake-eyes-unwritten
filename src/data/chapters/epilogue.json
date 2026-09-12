@@ -1,0 +1,125 @@
+{
+  "id": "epilogue",
+  "part": 5,
+  "title": "에필로그",
+  "bg": "gate",
+  "bgm": "epilogue",
+  "entry": "farewell",
+  "script": {
+    "farewell": [
+      { "t": "n", "text": "{name}는 끝내 떠났다. 기록자는 머무는 사람이 아니었으니까." },
+      { "t": "show", "who": "baelz", "at": "center" },
+      { "t": "n", "text": "베르는 붙잡지 않았다. 대신 성문 앞까지 따라 나와, 마왕답지 않게 손을 흔들었다." },
+      { "t": "s", "who": "baelz", "text": "또 와! 신하 1호는 평생직이야!" },
+      { "t": "pause", "ms": 1500 },
+      { "t": "n", "text": "{name} 혼자선 두 번 다시 못 찾을 길이었다." },
+      { "t": "n", "text": "하지만 베르의 수하는 어디에나 있었고 — 돌아오고 싶어지는 날엔, 그들이 먼저 {name}를 찾아낼 터였다." },
+      { "t": "pause", "ms": 2000 },
+      { "t": "hide", "who": "baelz" },
+      { "t": "goto", "label": "years" }
+    ],
+    "years": [
+      { "t": "bg", "key": "hill" },
+      { "t": "n", "text": "세월이 흘렀다. {name}의 노트는 베껴지고 또 베껴졌다." },
+      { "t": "n", "text": "그렇다고 무서운 마왕의 이야기가 사라진 것은 아니었다 — 하룻밤에 나라를 지운 뱀눈의 마왕은, 여전히 사람들이 목소리를 낮춰 떠드는 전설로 남았다." },
+      { "t": "n", "text": "다만 그 곁에, 다른 이야기가 하나 더 흐르기 시작했다." },
+      { "t": "s", "who": "crowd", "text": "원래는 저주받은 아이였대. 다 버림받고도, 마지막엔 자기 가진 단 하나로 친구를 되살렸다지." },
+      { "t": "s", "who": "crowd", "text": "그리고 어딘가에, 누구도 쫓겨나지 않는 나라를 세웠다더라." },
+      { "t": "pause", "ms": 1200 },
+      { "t": "n", "text": "대부분에게 그 마지막 한 줄은 그저 허황된 소문이었다. 술자리의 농담, 떠돌이의 흰소리." },
+      { "t": "n", "text": "— 하지만 그 눈 때문에, 그 뿔 때문에 뒷골목에 숨어 맞고 사는 이들에게는 달랐다." },
+      { "t": "n", "text": "그들에게 그 한 줄은, 세상에 단 하나 남은 희망이자, 감히 꿈꿔 본 적도 없던 꿈의 이야기였다." },
+      { "t": "if", "key": "ending", "eq": "pity", "goto": "end_pity" },
+      { "t": "if", "key": "ending", "eq": "respect", "goto": "end_respect" },
+      { "t": "goto", "label": "end_awe" }
+    ],
+    "end_pity": [
+      { "t": "set", "key": "seen_ending_pity", "value": true },
+      { "t": "n", "text": "*그 이야기를 들은 이들은 울었다. 자기 같은 아이가, 그렇게 혼자 견뎌 냈다는 것에.*" },
+      { "t": "goto", "label": "rescue" }
+    ],
+    "end_respect": [
+      { "t": "set", "key": "seen_ending_respect", "value": true },
+      { "t": "n", "text": "*그 이야기를 들은 이들은 고개를 들었다. 다 버림받고도 끝내 무언가를 지어 낸 그녀처럼, 자기도 그럴 수 있을지 모른다고.*" },
+      { "t": "goto", "label": "rescue" }
+    ],
+    "end_awe": [
+      { "t": "set", "key": "seen_ending_awe", "value": true },
+      { "t": "n", "text": "*그 이야기를 들은 이들은 오래 말을 잃었다. 부수고, 짓고, 끝내 견딘 그 전부를 — 함부로 판단하지 못한 채.*" },
+      { "t": "goto", "label": "rescue" }
+    ],
+    "rescue": [
+      { "t": "pause", "ms": 1500 },
+      { "t": "s", "who": "???", "text": "정말… 그런 곳이 있을까." },
+      { "t": "n", "text": "그렇게 눈빛이 흔들리는 순간, 세상 곳곳에 숨어 있던 베르의 수하가 그를 알아보고 조용히 다가갔다." },
+      { "t": "show", "who": "agent", "at": "right" },
+      { "t": "s", "who": "agent", "text": "…같이 갈래요? 아무도 당신을 안 쳐다보는 곳으로." },
+      { "t": "pause", "ms": 2500 },
+      { "t": "hide", "who": "agent" },
+      { "t": "goto", "label": "one_line" }
+    ],
+    "one_line": [
+      { "t": "n", "text": "스네이크 아이즈는 거짓말하지 않았다. 다만, 그동안 세상이 그 이야기를 틀리게 적었을 뿐이다." },
+      { "t": "n", "text": "그리고 한 떠돌이가, 그것을 바로 적었다." },
+      { "t": "pause", "ms": 1200 },
+      { "t": "n", "text": "평생 제 이야기 한 줄 없던 그 떠돌이는 — 그렇게, 세상에서 가장 오래 살아남을 이야기 안에 *한 줄*로 남았다." },
+      { "t": "n", "text": "베르가 약속한, 그 한 줄로." },
+      { "t": "pause", "ms": 2500 },
+      { "t": "goto", "label": "today" }
+    ],
+    "today": [
+      { "t": "bg", "key": "valley" },
+      { "t": "fx", "kind": "tint", "tone": "warm", "ms": 1500 },
+      { "t": "n", "text": "오늘도 그 나라의 왕은 옥좌에 앉아 있질 못하고 어딘가로 도망친다 — 절반은 놀러, 절반은 또 누군가를 데리러." },
+      { "t": "show", "who": "risa", "at": "left" },
+      { "t": "show", "who": "misa", "at": "right" },
+      { "t": "s", "who": "risa", "text": "또 도망쳤어!" },
+      { "t": "n", "text": "리사와 미사가 뒤를 쫓고, 백성들은 도망친 왕을 보고도 놀라지 않고 같이 웃어 준다." },
+      { "t": "hide", "who": "risa" },
+      { "t": "hide", "who": "misa" },
+      { "t": "pause", "ms": 1200 },
+      { "t": "bg", "key": "room" },
+      { "t": "n", "text": "옥좌 옆 작은 선반엔, 손때 묻은 노트 한 권이 놓여 있다." },
+      { "t": "if", "key": "pebble_story", "eq": true, "goto": "hidden_1" },
+      { "t": "goto", "label": "last" }
+    ],
+    "hidden_1": [
+      { "t": "if", "key": "ch09_stories", "eq": true, "goto": "hidden_2" },
+      { "t": "goto", "label": "last" }
+    ],
+    "hidden_2": [
+      { "t": "if", "key": "ch10_elder", "eq": true, "goto": "hidden_3" },
+      { "t": "goto", "label": "last" }
+    ],
+    "hidden_3": [
+      { "t": "if", "key": "ch10_woman", "eq": true, "goto": "hidden_pebble" },
+      { "t": "goto", "label": "last" }
+    ],
+    "hidden_pebble": [
+      { "t": "pause", "ms": 1500 },
+      { "t": "cg", "key": "epilogue_pebble" },
+      { "t": "n", "text": "그리고 그 노트 위에 — 서툴게 색칠한 조약돌 하나." },
+      { "t": "pause", "ms": 2500 },
+      { "t": "n", "text": "누가 준 것인지, 이 나라에서 아는 사람은 셋뿐이다. 베르는 그 조약돌을 여전히, 소중히 품고 있다." },
+      { "t": "set", "key": "hidden_seen", "value": true },
+      { "t": "pause", "ms": 2500 },
+      { "t": "cg", "key": null },
+      { "t": "goto", "label": "last" }
+    ],
+    "last": [
+      { "t": "bg", "key": "gate" },
+      { "t": "cg", "key": "epilogue_gate" },
+      { "t": "n", "text": "가끔 베르는, 성문 쪽을 한 번 돌아본다." },
+      { "t": "n", "text": "혹시 또, 뱀눈을 보고도 도망치지 않는 누군가가 — 그 이야기를 듣고 찾아올까 해서." },
+      { "t": "pause", "ms": 3000 },
+      { "t": "cg", "key": null },
+      { "t": "fx", "kind": "tint", "tone": "none", "ms": 1500 },
+      { "t": "bg", "key": "dark" },
+      { "t": "pause", "ms": 1500 },
+      { "t": "n", "text": "*— 끝.*" },
+      { "t": "set", "key": "cleared", "value": true },
+      { "t": "pause", "ms": 2000 },
+      { "t": "end" }
+    ]
+  }
+}

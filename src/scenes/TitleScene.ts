@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import { FONTS, GAME_HEIGHT, GAME_WIDTH, PALETTE_CSS } from "@/config";
-import { getChapter } from "@/data";
+import { CHAPTERS, getChapter } from "@/data";
 import { AudioManager } from "@/systems/AudioManager";
 import { SaveManager } from "@/systems/SaveManager";
 import { askName } from "@/ui/NameInput";
@@ -53,6 +53,7 @@ export class TitleScene extends Phaser.Scene {
         enabled: save.hasSave,
         onPick: () => this.scene.start("Chapter", { chapterId: save.data.chapterId }),
       },
+      { label: "다시 읽기", enabled: save.getFlag("cleared") === true, onPick: () => this.openChapterSelect() },
       { label: "설정", enabled: true, onPick: () => overlay.open("settings") },
     ];
 
@@ -69,8 +70,51 @@ export class TitleScene extends Phaser.Scene {
       });
     });
 
+    // 달성한 엔딩 표시
+    const endings: [string, string][] = [
+      ["seen_ending_pity", "연민"],
+      ["seen_ending_respect", "존중"],
+      ["seen_ending_awe", "경외"],
+    ];
+    const got = endings.filter(([k]) => save.getFlag(k) === true).map(([, n]) => n);
+    if (got.length) {
+      const extra = save.getFlag("hidden_seen") === true ? " · 조약돌" : "";
+      this.add
+        .text(cx, GAME_HEIGHT - 50, `엔딩 ${got.join(" · ")}${extra}`, { fontFamily: FONTS.mono, fontSize: "11px", color: PALETTE_CSS.mute })
+        .setOrigin(0.5);
+    }
+
     this.add
       .text(cx, GAME_HEIGHT - 28, "비영리 팬 창작 · hololive / Hakos Baelz · 2차 창작 가이드라인 준수", { fontFamily: FONTS.mono, fontSize: "11px", color: PALETTE_CSS.mute })
       .setOrigin(0.5);
+  }
+
+  /** 엔딩 후 열리는 챕터 선택. 플래그는 유지되므로 14장만 다시 골라 다른 엔딩을 볼 수 있다. */
+  private openChapterSelect(): void {
+    const veil = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0x08080b, 0.96).setOrigin(0).setInteractive();
+    const root = this.add.container(0, 0, [veil]).setDepth(2500);
+    root.add(this.add.text(GAME_WIDTH / 2, 50, "CHAPTERS", { fontFamily: FONTS.display, fontSize: "16px", color: PALETTE_CSS.baelzRed }).setOrigin(0.5));
+    const cols = 2;
+    const rows = Math.ceil(CHAPTERS.length / cols);
+    CHAPTERS.forEach((ch, i) => {
+      const col = Math.floor(i / rows);
+      const row = i % rows;
+      const num = /^ch(\d+)$/.exec(ch.id)?.[1].padStart(2, "0") ?? "EP";
+      const t = this.add
+        .text(200 + col * 300, 100 + row * 36, `${num}  ${ch.title}`, { fontFamily: FONTS.body, fontSize: "18px", color: PALETTE_CSS.bone })
+        .setOrigin(0, 0.5)
+        .setInteractive({ useHandCursor: true });
+      t.on("pointerover", () => t.setColor(PALETTE_CSS.baelzRed));
+      t.on("pointerout", () => t.setColor(PALETTE_CSS.bone));
+      t.on("pointerdown", () => this.scene.start("Chapter", { chapterId: ch.id }));
+      root.add(t);
+    });
+    const close = this.add
+      .text(GAME_WIDTH / 2, GAME_HEIGHT - 40, "닫기", { fontFamily: FONTS.body, fontSize: "18px", color: PALETTE_CSS.mute })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true });
+    close.on("pointerdown", () => root.destroy());
+    root.add(close);
+    this.input.keyboard?.once("keydown-ESC", () => root.destroy());
   }
 }

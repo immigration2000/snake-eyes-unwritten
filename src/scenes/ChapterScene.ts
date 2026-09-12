@@ -78,8 +78,8 @@ export class ChapterScene extends Phaser.Scene implements StageHooks {
 
     if (ch.world) this.buildWorld(ch.world.width, ch.world.spawn);
 
-    // 색조 오버레이 — 스프라이트·배경 위, 대화창 아래
-    this.tint = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0xffffff, 0).setOrigin(0).setScrollFactor(0).setDepth(550).setBlendMode(Phaser.BlendModes.MULTIPLY);
+    // 색조 오버레이 — 스프라이트·배경·CG 위, 대화창 아래
+    this.tint = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0xffffff, 0).setOrigin(0).setScrollFactor(0).setDepth(650).setBlendMode(Phaser.BlendModes.MULTIPLY);
 
     this.audio = AudioManager.get(this);
     if (ch.bgm) this.audio.playBgm(ch.bgm);
@@ -192,7 +192,8 @@ export class ChapterScene extends Phaser.Scene implements StageHooks {
   // ---------- HUD / 연출 ----------
 
   private chapterNumber(): string {
-    return this.chapter.id.replace("ch", "").padStart(2, "0");
+    const m = /^ch(\d+)$/.exec(this.chapter.id);
+    return m ? m[1].padStart(2, "0") : "EP";
   }
 
   private buildHud(): void {

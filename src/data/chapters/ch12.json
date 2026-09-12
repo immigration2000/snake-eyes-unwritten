@@ -64,8 +64,7 @@
       { "t": "goto", "label": "wip" }
     ],
     "wip": [
-      { "t": "n", "text": "— 부 III 끝. 부 IV 「진실」부터는 개발 중입니다. —" },
-      { "t": "end" }
+      { "t": "chapter", "id": "ch13" }
     ]
   }
 }
