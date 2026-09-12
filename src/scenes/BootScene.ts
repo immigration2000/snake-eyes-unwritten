@@ -78,6 +78,8 @@ export class BootScene extends Phaser.Scene {
       risa: { body: 0x111111, accent: PALETTE.risaAmber, h: 96 },
       misa: { body: 0x111111, accent: PALETTE.misaCyan, h: 96 },
       baelz_cry: { body: 0x2a1418, accent: 0xff7a86, h: 90 },
+      baelz_child_cold: { body: 0x1a1216, accent: PALETTE.misaCyan, h: 60 },
+      baelz_child_cry: { body: 0x2a1418, accent: 0xff7a86, h: 60 },
       baelz_veiled: { body: 0x3a3436, accent: 0x6a6468, h: 60 },
       risa_bare: { body: 0x111111, accent: 0xf5d08a, h: 96 },
       misa_bare: { body: 0x111111, accent: 0x9ae8ef, h: 96 },

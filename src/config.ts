@@ -36,7 +36,10 @@ export const SPEAKERS: Record<string, { name: string; color: string; sprite?: st
   misa: { name: "미사", color: PALETTE_CSS.misaCyan, sprite: "misa" },
   amber: { name: "앰버 가면", color: PALETTE_CSS.risaAmber, sprite: "risa" },
   cyan: { name: "시안 가면", color: PALETTE_CSS.misaCyan, sprite: "misa" },
+  bel: { name: "베르", color: PALETTE_CSS.baelzRed, sprite: "baelz_child" }, // 회상 속 어린 베르
   baelz_veiled: { name: "면포의 아이", color: PALETTE_CSS.baelzRed, sprite: "baelz_veiled" },
+  court: { name: "신하들", color: PALETTE_CSS.mute },
+  mother: { name: "아이의 어미", color: PALETTE_CSS.mute },
   king: { name: "왕", color: PALETTE_CSS.bone, sprite: "king" },
   eldest: { name: "맏이", color: PALETTE_CSS.mute, sprite: "eldest" },
   second: { name: "둘째", color: PALETTE_CSS.mute, sprite: "second" },
