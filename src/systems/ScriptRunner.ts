@@ -149,14 +149,16 @@ export class ScriptRunner {
   private async line(who: string | null, raw: string, lineId: string): Promise<void> {
     const text = this.interp(raw);
     const seen = SeenLines.has(lineId);
-    await this.box.say(who, text, this.skipping(seen));
+    const typed = this.box.say(who, text, this.skipping(seen));
     Backlog.push({ who, text });
     SeenLines.mark(lineId);
     if (this.skipping(seen)) {
+      await typed;
       await this.delay(60);
       return;
     }
-    await this.waitAdvance(() => this.skipping(seen));
+    // 타자 중 입력 = 타자 건너뛰기, 타자 끝난 뒤 입력 = 다음 줄
+    await Promise.all([typed, this.waitAdvance(() => this.skipping(seen))]);
   }
 
   /** Ctrl 을 누르고 있고 이미 읽은 줄이면 스킵 */

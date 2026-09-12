@@ -20,6 +20,7 @@ export class DialogueBox {
   private choiceRoot: Phaser.GameObjects.Container;
   private typing?: Phaser.Time.TimerEvent;
   private shown = 0;
+  private resolveSay?: () => void;
   private settings = Settings.get();
 
   constructor(scene: Phaser.Scene) {
@@ -98,17 +99,16 @@ export class DialogueBox {
       return Promise.resolve();
     }
 
+    // 타자가 끝나거나 skipTyping() 으로 건너뛰면 resolve
     return new Promise((resolve) => {
+      this.resolveSay = resolve;
       this.typing = this.scene.time.addEvent({
         delay: 1000 / cps,
         repeat: this.body.total - 1,
         callback: () => {
           this.shown++;
           this.body.reveal(this.shown);
-          if (this.shown >= this.body.total) {
-            this.finishTyping();
-            resolve();
-          }
+          if (this.shown >= this.body.total) this.finishTyping();
         },
       });
     });
@@ -128,6 +128,7 @@ export class DialogueBox {
     this.cursor.setVisible(false);
     this.clearChoices();
     this.body.setVisible(false);
+    this.nameText.setVisible(false);
     return new Promise((resolve) => {
       const startY = 44;
       const kb = this.scene.input.keyboard;
@@ -158,6 +159,9 @@ export class DialogueBox {
     this.shown = this.body.total;
     this.body.revealAll();
     this.cursor.setVisible(true);
+    const r = this.resolveSay;
+    this.resolveSay = undefined;
+    r?.();
   }
 
   private clearChoices(): void {

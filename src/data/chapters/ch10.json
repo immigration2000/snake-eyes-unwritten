@@ -1,0 +1,66 @@
+{
+  "id": "ch10",
+  "part": 3,
+  "title": "나라를 걷다",
+  "bg": "valley",
+  "bgm": "ch10",
+  "world": { "width": 2200, "spawn": 80 },
+  "entry": "start",
+  "triggers": [
+    { "x": 700, "label": "elder", "once": true, "sprite": "elder", "hint": "뿔 노인의 노점" },
+    { "x": 1200, "label": "woman", "once": true, "sprite": "scale_woman", "hint": "병자의 집" },
+    { "x": 1650, "label": "way_back", "auto": true, "once": true },
+    { "x": 2100, "label": "night", "auto": true, "once": true }
+  ],
+  "script": {
+    "start": [
+      { "t": "n", "text": "베르가 성 밖으로 도망친 어느 날, {name}는 리사·미사와 셋이서 나라를 천천히 돌았다." },
+      { "t": "n", "text": "왕이 없는 사이의 나라를 걷는 것 — {name}는 그게 오히려 왕을 아는 길이라고 느꼈다." }
+    ],
+    "elder": [
+      { "t": "set", "key": "ch10_elder", "value": true },
+      { "t": "n", "text": "시장 골목의 한 노점은 뿔 달린 노인이 지키고 있었다. 노인은 리사를 보자마자 손을 흔들었다." },
+      { "t": "show", "who": "risa", "at": "left" },
+      { "t": "s", "who": "elder", "text": "리사 아가씨! 어제 그 뿔 안 부러진 아이는 잘 자리 잡았수?" },
+      { "t": "s", "who": "risa", "text": "네! 벌써 옆집이랑 친해졌대요!" },
+      { "t": "n", "text": "노인이 {name}를 향해 눈을 찡긋했다." },
+      { "t": "s", "who": "elder", "text": "이 나라엔 별 이야기가 다 있어요. 여기 오기 전까지 나는, 뿔 값을 물어 주는 게 세금인 줄 알았지." },
+      { "t": "hide", "who": "risa" }
+    ],
+    "woman": [
+      { "t": "set", "key": "ch10_woman", "value": true },
+      { "t": "n", "text": "미사는 다른 곳에서 조용히 병자 하나를 살피고 있었다. 비늘 덮인 손으로 이불을 여미는 중년의 여자였다." },
+      { "t": "show", "who": "misa", "at": "right" },
+      { "t": "s", "who": "misa", "text": "약초는 다음 장에도 받아 두겠습니다." },
+      { "t": "s", "who": "scale_woman", "text": "고마워요, 미사 아가씨. …근데 아가씨는 왜 늘 그 가면을." },
+      { "t": "s", "who": "misa", "text": "…버릇이에요." },
+      { "t": "n", "text": "미사가 짧게 답했다. {name}가 지켜보다 물었다." },
+      { "t": "s", "who": "noah", "text": "그런 건 다 네가 챙겨?" },
+      { "t": "s", "who": "misa", "text": "제가 챙길 수 있는 것만요." },
+      { "t": "n", "text": "미사가 처음으로, 아주 옅게 웃었다." },
+      { "t": "s", "who": "misa", "text": "베르 님은 큰 걸 지어요. 저는 그 안에서 새는 걸 막고요." },
+      { "t": "hide", "who": "misa" }
+    ],
+    "way_back": [
+      { "t": "n", "text": "돌아오는 길, 리사가 {name} 옆에 붙어서 재잘거렸다." },
+      { "t": "show", "who": "risa", "at": "left" },
+      { "t": "show", "who": "misa", "at": "right" },
+      { "t": "s", "who": "risa", "text": "야, 근데 있잖아. 미사 저래 봬도 밤에 베르 님 재울 때 자장가 부르는데, 그거 완전 음치야." },
+      { "t": "s", "who": "misa", "text": "…네가 조용히 하면, 나도 남의 흑역사 안 꺼낸다." },
+      { "t": "n", "text": "뒤에서 미사의 잔잔한 목소리. 리사가 픽픽 웃음을 참았다." },
+      { "t": "n", "text": "{name}는 두 사람이 늘 붙어 다니는 이유를 알 것 같았다 — 서로가 세상에서 유일하게 남은 조각이었으니까." },
+      { "t": "hide", "who": "risa" },
+      { "t": "hide", "who": "misa" }
+    ],
+    "night": [
+      { "t": "bg", "key": "room" },
+      { "t": "n", "text": "그 밤, {name}는 노트에 이렇게 적었다." },
+      { "t": "se", "key": "page" },
+      { "t": "n", "text": "*이 나라는 크지 않다. 다만, 지어진 자리마다 사람이 있다.*" },
+      { "t": "pause", "ms": 1200 },
+      { "t": "n", "text": "처음으로 남을 위해 적는 문장이 아니었다. 자신을 위해 처음 남긴 한 줄이었다." },
+      { "t": "pause", "ms": 1500 },
+      { "t": "chapter", "id": "ch11" }
+    ]
+  }
+}

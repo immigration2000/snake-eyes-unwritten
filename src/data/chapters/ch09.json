@@ -1,0 +1,98 @@
+{
+  "id": "ch09",
+  "part": 3,
+  "title": "신하 1호",
+  "bg": "valley",
+  "bgm": "ch09",
+  "world": { "width": 2300, "spawn": 80 },
+  "entry": "start",
+  "triggers": [
+    { "x": 380, "label": "morning", "auto": true, "once": true, "sprite": "baelz" },
+    { "x": 800, "label": "tour", "auto": true, "once": true, "sprite": "elder" },
+    { "x": 1200, "label": "stories", "once": true, "sprite": "baelz", "hint": "이야기 들려주기" },
+    { "x": 1700, "label": "rooftop", "auto": true, "once": true },
+    { "x": 2200, "label": "to_ch10", "auto": true, "once": true }
+  ],
+  "script": {
+    "start": [
+      { "t": "n", "text": "며칠만 머물 생각이었다. 그런데 며칠이 자꾸 늘어났다." },
+      { "t": "pause", "ms": 800 },
+      { "t": "n", "text": "베르는 {name}를 가만두지 않았다." }
+    ],
+    "morning": [
+      { "t": "n", "text": "아침이면 어김없이 {name}의 방문을 벌컥 열고 —" },
+      { "t": "s", "who": "baelz", "text": "신하 1호! 일어나! 오늘은 보여줄 데 있어!" },
+      { "t": "n", "text": "— 대답도 듣기 전에 손목을 잡아끌었다." },
+      { "t": "s", "who": "misa", "text": "베르 님, 손님은 좀…" },
+      { "t": "n", "text": "미사가 말려도 소용없었다." }
+    ],
+    "tour": [
+      { "t": "n", "text": "베르는 {name}를 데리고 나라 구석구석을 쏘다녔다." },
+      { "t": "n", "text": "비늘 덮인 대장장이의 풀무질, 뿔 달린 노인이 키우는 별난 새, 지붕 위에서 내려다보는 골짜기 전부." },
+      { "t": "n", "text": "그러다 꼭, 같은 걸 졸랐다." },
+      { "t": "s", "who": "baelz", "text": "이야기 해 줘. 네 노트에 있는 거. 멀고 먼 데 거." }
+    ],
+    "stories": [
+      { "t": "set", "key": "ch09_stories", "value": true },
+      { "t": "n", "text": "{name}는 그동안 수백 명의 이야기를 모았지만, 그걸 이렇게까지 *듣고 싶어 하는* 사람은 처음이었다." },
+      { "t": "n", "text": "베르는 바다를 건너는 도시 이야기에선 입을 떡 벌렸고, 슬픈 이야기에선 {name} 몰래 눈가를 훔쳤다." },
+      { "t": "n", "text": "끝도 없는 호기심. 한 나라를 지웠다는 그 손으로 {name}의 소매를 잡고, 조르는 어린애." },
+      { "t": "s", "who": "baelz", "text": "더! 더 해 줘!" },
+      { "t": "n", "text": "한번은 {name}가, 먼 남쪽 나라의 새하얀 꽃나무 이야기를 꺼냈다." },
+      { "t": "s", "who": "noah", "text": "아카시아라고 해." },
+      { "t": "s", "who": "baelz", "text": "오오…! 아, 아카… 아카시안!" },
+      {
+        "t": "choice",
+        "options": [
+          { "text": "아카시아.", "goto": "acacia_correct", "set": { "ch09_acacia": "correct" } },
+          { "text": "(웃음을 참는다)", "goto": "acacia_laugh", "set": { "ch09_acacia": "laugh" } }
+        ]
+      }
+    ],
+    "acacia_correct": [
+      { "t": "s", "who": "noah", "text": "아카시아." },
+      { "t": "s", "who": "baelz", "text": "아카시안!" },
+      { "t": "goto", "label": "acacia_misa" }
+    ],
+    "acacia_laugh": [
+      { "t": "n", "text": "{name}는 입을 꾹 다물었다. 어깨가 조금 흔들렸다." },
+      { "t": "s", "who": "baelz", "text": "뭐야, 왜 웃어. 아카시안 맞잖아!" },
+      { "t": "goto", "label": "acacia_misa" }
+    ],
+    "acacia_misa": [
+      { "t": "show", "who": "misa", "at": "right" },
+      { "t": "n", "text": "미사가 담담히 정정했다." },
+      { "t": "s", "who": "misa", "text": "아카시아입니다, 베르 님." },
+      { "t": "s", "who": "baelz", "text": "…아, 카, 시, 아." },
+      { "t": "show", "who": "risa", "at": "left" },
+      { "t": "n", "text": "겨우 따라 한 베르는, 옆에서 리사가 픽픽 새어 나오는 웃음을 참는 걸 보고 얼굴이 확 달아올랐다." },
+      { "t": "s", "who": "baelz", "text": "뭐! 원래 그렇게도 부르는 거거든?! …아마!" },
+      { "t": "s", "who": "misa", "text": "아뇨." },
+      { "t": "s", "who": "baelz", "text": "미사 너 조용히 해!" },
+      { "t": "n", "text": "{name}는 웃음을 참느라 애를 먹었다. 한 나라를 지웠다는 마왕이, 꽃나무 이름 하나에 이렇게 발끈할 줄이야." },
+      { "t": "hide", "who": "misa" },
+      { "t": "hide", "who": "risa" }
+    ],
+    "rooftop": [
+      { "t": "bg", "key": "rooftop" },
+      { "t": "n", "text": "어느 저녁, 베르는 {name}를 데리고 또 성을 빠져나갔다." },
+      { "t": "show", "who": "baelz", "at": "right" },
+      { "t": "n", "text": "시장 노점에서 꼬치를 슬쩍하고 —" },
+      { "t": "s", "who": "noah", "text": "야, 그건 훔치는…" },
+      { "t": "s", "who": "baelz", "text": "빌리는 거야. 나중에 갚아." },
+      { "t": "cg", "key": "ch09_rooftop" },
+      { "t": "n", "text": "— 지붕 위에 나란히 앉아, 불 켜지는 나라를 내려다보며 그걸 나눠 먹었다." },
+      { "t": "s", "who": "risa", "text": "또 도망쳤네!" },
+      { "t": "n", "text": "곧 리사가 옆 지붕으로 뛰어 올라왔고, 미사가 한숨을 쉬며 따라와 베르의 곤두선 꼬리를 정리해 줬고, 넷은 그렇게 한참을 시시한 걸로 웃었다." },
+      { "t": "pause", "ms": 1500 },
+      { "t": "n", "text": "{name}는 문득 깨달았다. 평생 남의 이야기 *바깥*에 서서 그걸 받아 적기만 했는데 — 지금 자기는, 어떤 이야기의 *안쪽*에 앉아 있었다." },
+      { "t": "n", "text": "그게 어떤 기분이었는지, {name}는 너무 오래 잊고 있었다." },
+      { "t": "pause", "ms": 1500 },
+      { "t": "cg", "key": null },
+      { "t": "hide", "who": "baelz" }
+    ],
+    "to_ch10": [
+      { "t": "chapter", "id": "ch10" }
+    ]
+  }
+}
