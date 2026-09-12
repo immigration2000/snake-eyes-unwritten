@@ -1,0 +1,24 @@
+{
+  "name": "snake-eyes-unwritten",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SNAKE EYES: 아무도 적지 않은 나라 — 2D 픽셀 내러티브 어드벤처 (hololive Hakos Baelz 비영리 팬게임)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "validate:script": "node scripts/validate-chapters.mjs"
+  },
+  "dependencies": {
+    "phaser": "^3.90.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "vite": "^6.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
