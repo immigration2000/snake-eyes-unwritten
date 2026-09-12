@@ -15,7 +15,9 @@ export class TitleScene extends Phaser.Scene {
 
   create(): void {
     const save = SaveManager.get();
-    const cx = GAME_WIDTH / 2;
+    const hasArt = this.textures.exists("ui_title");
+    // 실제 키 비주얼이 있으면 글자를 왼쪽 기둥으로 몰고 그림은 오른쪽에 살린다
+    const cx = hasArt ? 270 : GAME_WIDTH / 2;
     this.busy = false;
 
     // ?chapter=ch05 로 바로 진입 (테스트용)
@@ -27,9 +29,14 @@ export class TitleScene extends Phaser.Scene {
 
     AudioManager.get(this).playBgm("main_theme");
 
-    if (this.textures.exists("ui_title")) {
-      // 실제 타이틀 아트 (assets/ui/title.png, 960×540)
-      this.add.image(cx, GAME_HEIGHT / 2, "ui_title").setDisplaySize(GAME_WIDTH, GAME_HEIGHT);
+    if (hasArt) {
+      // 실제 타이틀 아트 (assets/ui/title.png, 960×540) + 왼쪽 어둡게
+      this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, "ui_title").setDisplaySize(GAME_WIDTH, GAME_HEIGHT).setAlpha(0.9);
+      const g = this.add.graphics();
+      g.fillGradientStyle(PALETTE.ink, PALETTE.ink, PALETTE.ink, PALETTE.ink, 0.92, 0, 0.92, 0);
+      g.fillRect(0, 0, 620, GAME_HEIGHT);
+      g.fillGradientStyle(PALETTE.ink, PALETTE.ink, PALETTE.ink, PALETTE.ink, 0, 0, 0.7, 0.7);
+      g.fillRect(0, GAME_HEIGHT - 90, GAME_WIDTH, 90);
     } else {
       this.add.image(cx, GAME_HEIGHT / 2, "bg_forest").setAlpha(0.6);
       this.drawSnakeEyes(cx, 92);

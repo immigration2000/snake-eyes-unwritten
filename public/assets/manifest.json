@@ -39,8 +39,25 @@
     "sister",
     "slaver"
   ],
-  "cg": [],
+  "cg": [
+    "ch02_forest_child",
+    "ch04_prophecy",
+    "ch05_escape",
+    "ch06_veil",
+    "ch07_unveiled",
+    "ch08_wish",
+    "ch09_rooftop",
+    "ch11_name",
+    "ch13_two_faces",
+    "ch14_hill",
+    "ch15_bare",
+    "ch16_gift",
+    "epilogue_gate",
+    "epilogue_pebble"
+  ],
   "audio": [],
   "se": [],
-  "ui": []
+  "ui": [
+    "title"
+  ]
 }
