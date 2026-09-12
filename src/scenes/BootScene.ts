@@ -16,11 +16,12 @@ export class BootScene extends Phaser.Scene {
     const base = import.meta.env.BASE_URL;
     this.load.json("manifest", `${base}assets/manifest.json`);
     this.load.once("filecomplete-json-manifest", () => {
-      const m = this.cache.json.get("manifest") as Partial<Record<"bg" | "sprites" | "cg" | "audio", string[]>>;
+      const m = this.cache.json.get("manifest") as Partial<Record<"bg" | "sprites" | "cg" | "audio" | "se", string[]>>;
       for (const k of m.bg ?? []) this.load.image(`bg_${k}`, `${base}assets/bg/${k}.png`);
       for (const k of m.sprites ?? []) this.load.image(`spr_${k}`, `${base}assets/sprites/${k}.png`);
       for (const k of m.cg ?? []) this.load.image(`cg_${k}`, `${base}assets/cg/${k}.png`);
       for (const k of m.audio ?? []) this.load.audio(`bgm_${k}`, `${base}assets/audio/${k}.mp3`);
+      for (const k of m.se ?? []) this.load.audio(`se_${k}`, `${base}assets/audio/se/${k}.mp3`);
     });
   }
 
@@ -76,8 +77,21 @@ export class BootScene extends Phaser.Scene {
       baelz_cold: { body: 0x101418, accent: PALETTE.misaCyan, h: 90 },
       risa: { body: 0x111111, accent: PALETTE.risaAmber, h: 96 },
       misa: { body: 0x111111, accent: PALETTE.misaCyan, h: 96 },
+      baelz_cry: { body: 0x2a1418, accent: 0xff7a86, h: 90 },
+      baelz_veiled: { body: 0x3a3436, accent: 0x6a6468, h: 60 },
+      risa_bare: { body: 0x111111, accent: 0xf5d08a, h: 96 },
+      misa_bare: { body: 0x111111, accent: 0x9ae8ef, h: 96 },
       king: { body: 0x3a3028, accent: 0xb0a090, h: 88 },
+      eldest: { body: 0x2c2a30, accent: 0x8a8898, h: 96 },
+      second: { body: 0x2c2a30, accent: 0x6a6878, h: 98 },
+      sister: { body: 0x2c2a30, accent: 0xa898a8, h: 92 },
+      child: { body: 0x3a3228, accent: 0xc8b090, h: 52 },
+      slaver: { body: 0x241c18, accent: 0x7a5a40, h: 100 },
       horn_boy: { body: 0x2a2620, accent: 0x9a8a70, h: 56 },
+      scale_boy: { body: 0x1e2a2a, accent: 0x6ab8b0, h: 54 },
+      scale_woman: { body: 0x1e2a2a, accent: 0x6ab8b0, h: 84 },
+      elder: { body: 0x2e2820, accent: 0xa09880, h: 82 },
+      agent: { body: 0x111111, accent: 0x444444, h: 96 },
     };
     for (const [key, c] of Object.entries(chars)) {
       if (this.textures.exists(`spr_${key}`)) continue;

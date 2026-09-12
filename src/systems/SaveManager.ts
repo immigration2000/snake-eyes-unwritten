@@ -72,3 +72,39 @@ export class SaveManager {
     }
   }
 }
+
+const SEEN_KEY = "snake-eyes-unwritten:seen-lines:v1";
+
+/**
+ * 읽은 대사 기록 ("ch01:start:3"). 세이브와 별개로 보관해 새 이야기를 시작해도 유지된다
+ * — 다른 엔딩을 보러 다시 플레이할 때 읽은 부분을 스킵하기 위함.
+ */
+export class SeenLines {
+  private static set: Set<string> | null = null;
+
+  private static load(): Set<string> {
+    if (!SeenLines.set) {
+      try {
+        SeenLines.set = new Set(JSON.parse(localStorage.getItem(SEEN_KEY) ?? "[]") as string[]);
+      } catch {
+        SeenLines.set = new Set();
+      }
+    }
+    return SeenLines.set;
+  }
+
+  static has(id: string): boolean {
+    return SeenLines.load().has(id);
+  }
+
+  static mark(id: string): void {
+    const s = SeenLines.load();
+    if (s.has(id)) return;
+    s.add(id);
+    try {
+      localStorage.setItem(SEEN_KEY, JSON.stringify([...s]));
+    } catch {
+      /* ignore */
+    }
+  }
+}

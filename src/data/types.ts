@@ -4,7 +4,12 @@
  */
 export type Cmd =
   | { t: "n"; text: string } // 나레이션
-  | { t: "s"; who: string; text: string; face?: string } // 대사
+  | { t: "s"; who: string; text: string; face?: string } // 대사 (face: 말하기 전 표정 스프라이트 교체)
+  | { t: "face"; who: string; face: string } // 표정 교체 (스프라이트 키)
+  | { t: "se"; key: string } // 효과음
+  | { t: "fx"; kind: "shake"; ms?: number; intensity?: number } // 카메라 흔들림
+  | { t: "fx"; kind: "flash"; color?: string; ms?: number } // 화면 번쩍임
+  | { t: "fx"; kind: "tint"; tone: "cold" | "warm" | "chaos" | "none"; ms?: number } // 색조 오버레이 (§9-1)
   | { t: "choice"; options: ChoiceOption[] } // 선택지
   | { t: "goto"; label: string } // 다른 블록으로 점프
   | { t: "set"; key: string; value: string | number | boolean } // 플래그 설정

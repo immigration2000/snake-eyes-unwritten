@@ -1,15 +1,19 @@
 import Phaser from "phaser";
 import { FONTS, GAME_HEIGHT, GAME_WIDTH, PALETTE, PALETTE_CSS, SPEAKERS } from "@/config";
 import { getChapter } from "@/data";
-import type { Chapter, Trigger } from "@/data/types";
+import type { Chapter, Cmd, Trigger } from "@/data/types";
+import { AudioManager } from "@/systems/AudioManager";
 import { DialogueBox } from "@/systems/DialogueBox";
 import { ScriptRunner, type StageHooks } from "@/systems/ScriptRunner";
 import { SaveManager } from "@/systems/SaveManager";
+import { Overlay } from "@/ui/Overlay";
 
 const GROUND_Y = 450;
 const PLAYER_SPEED = 170;
 const INTERACT_RANGE = 48;
 const PART_NAMES = ["", "부 I. 숲의 아이", "부 II. 기록", "부 III. 머무는 날들", "부 IV. 진실", "부 V. 다시 쓰기"];
+/** 색조 오버레이 (MULTIPLY). §9-1: 일상=웜, 진실=콜드 */
+const TONES: Record<string, number> = { cold: 0x7fb8c8, warm: 0xf2cf9a };
 
 interface TriggerView {
   def: Trigger;
@@ -33,8 +37,13 @@ export class ChapterScene extends Phaser.Scene implements StageHooks {
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private keys?: { a: Phaser.Input.Keyboard.Key; d: Phaser.Input.Keyboard.Key; e: Phaser.Input.Keyboard.Key };
   private triggers: TriggerView[] = [];
+  private triggerSprites: Phaser.GameObjects.Image[] = [];
   private actors = new Map<string, Phaser.GameObjects.Image>();
   private nearest: TriggerView | null = null;
+  private audio!: AudioManager;
+  private overlay!: Overlay;
+  private tint!: Phaser.GameObjects.Rectangle;
+  private chaosTimer?: Phaser.Time.TimerEvent;
 
   constructor() {
     super("Chapter");
@@ -45,6 +54,7 @@ export class ChapterScene extends Phaser.Scene implements StageHooks {
     if (!ch) throw new Error(`챕터 없음: ${data.chapterId}`);
     this.chapter = ch;
     this.triggers = [];
+    this.triggerSprites = [];
     this.actors.clear();
     this.nearest = null;
     this.player = undefined;
@@ -68,8 +78,18 @@ export class ChapterScene extends Phaser.Scene implements StageHooks {
 
     if (ch.world) this.buildWorld(ch.world.width, ch.world.spawn);
 
+    // 색조 오버레이 — 스프라이트·배경 위, 대화창 아래
+    this.tint = this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0xffffff, 0).setOrigin(0).setScrollFactor(0).setDepth(550).setBlendMode(Phaser.BlendModes.MULTIPLY);
+
+    this.audio = AudioManager.get(this);
+    if (ch.bgm) this.audio.playBgm(ch.bgm);
+
     this.box = new DialogueBox(this);
     this.runner = new ScriptRunner(this, ch, this.box, this);
+    this.overlay = new Overlay(this, {
+      onToggle: (open) => (this.runner.inputBlocked = open),
+      onTitle: () => this.scene.start("Title"),
+    });
 
     this.buildHud();
     void this.showTitleCard().then(() => {
@@ -81,7 +101,7 @@ export class ChapterScene extends Phaser.Scene implements StageHooks {
     if (!this.player || !this.cursors || !this.keys) return;
     const body = this.player.body as Phaser.Physics.Arcade.Body;
 
-    if (this.runner.running) {
+    if (this.runner.running || this.overlay.isOpen) {
       body.setVelocityX(0);
       return;
     }
@@ -122,7 +142,7 @@ export class ChapterScene extends Phaser.Scene implements StageHooks {
       const id = `${this.chapter.id}:${def.label}`;
       const view: TriggerView = { def, id, fired: def.once ? this.save.hasSeen(id) : false };
       if (def.sprite) {
-        this.add.image(def.x, GROUND_Y, `spr_${def.sprite}`).setOrigin(0.5, 1).setDepth(9);
+        this.triggerSprites.push(this.add.image(def.x, GROUND_Y, `spr_${def.sprite}`).setOrigin(0.5, 1).setDepth(9).setName(def.sprite));
       }
       if (!def.auto) {
         view.hint = this.add
@@ -157,7 +177,7 @@ export class ChapterScene extends Phaser.Scene implements StageHooks {
   }
 
   private tryInteract(): void {
-    if (this.runner.running || !this.nearest) return;
+    if (this.runner.running || this.overlay.isOpen || !this.nearest) return;
     this.fire(this.nearest);
   }
 
@@ -186,9 +206,10 @@ export class ChapterScene extends Phaser.Scene implements StageHooks {
       .setScrollFactor(0)
       .setDepth(900);
 
-    if (ch.world) {
+    {
+      const hint = ch.world ? "← → 이동 · E 상호작용 · Space 진행 · L 로그 · Esc 메뉴" : "Space 진행 · Ctrl 스킵 · L 로그 · Esc 메뉴";
       this.add
-        .text(GAME_WIDTH - 16, 12, "← → 이동 · E 상호작용 · Space 진행", {
+        .text(GAME_WIDTH - 16, 12, hint, {
           fontFamily: FONTS.mono,
           fontSize: "11px",
           color: PALETTE_CSS.mute,
@@ -281,16 +302,82 @@ export class ChapterScene extends Phaser.Scene implements StageHooks {
   }
 
   playBgm(key: string | null): void {
-    // M1: public/assets/audio/{key}.mp3 로드 + 크로스페이드. 지금은 로그만.
-    console.info(`[bgm] ${key ?? "stop"}`);
+    this.audio.playBgm(key);
+  }
+
+  playSe(key: string): void {
+    this.audio.playSe(key);
+  }
+
+  /** 표정 교체: 등장 중인 배우 또는 트리거 자리에 서 있는 스프라이트 */
+  setFace(who: string, face: string): void {
+    const tex = `spr_${face}`;
+    if (!this.textures.exists(tex)) {
+      console.warn(`[face] 스프라이트 없음: ${face}`);
+      return;
+    }
+    const actor = this.actors.get(who);
+    if (actor) {
+      actor.setTexture(tex);
+      return;
+    }
+    const base = SPEAKERS[who]?.sprite;
+    for (const img of this.triggerSprites) if (img.name === base) img.setTexture(tex).setName(face);
+  }
+
+  fx(cmd: Extract<Cmd, { t: "fx" }>): Promise<void> {
+    const cam = this.cameras.main;
+    switch (cmd.kind) {
+      case "shake":
+        cam.shake(cmd.ms ?? 400, cmd.intensity ?? 0.008);
+        return this.wait(cmd.ms ?? 400);
+      case "flash": {
+        const c = Phaser.Display.Color.HexStringToColor(cmd.color ?? "#ece3dd");
+        cam.flash(cmd.ms ?? 300, c.red, c.green, c.blue);
+        return this.wait(cmd.ms ?? 300);
+      }
+      case "tint":
+        return this.setTone(cmd.tone, cmd.ms ?? 800);
+    }
+  }
+
+  private setTone(tone: "cold" | "warm" | "chaos" | "none", ms: number): Promise<void> {
+    this.chaosTimer?.remove(false);
+    this.chaosTimer = undefined;
+    if (tone === "chaos") {
+      // 8장 폭주: 레드·시안이 번갈아 덮치고 흔들린다. ms 동안 지속 후 자동 해제.
+      this.tint.setBlendMode(Phaser.BlendModes.ADD).setAlpha(0.35);
+      let flip = false;
+      this.chaosTimer = this.time.addEvent({
+        delay: 110,
+        loop: true,
+        callback: () => {
+          flip = !flip;
+          this.tint.setFillStyle(flip ? PALETTE.baelzRed : PALETTE.misaCyan, 0.35);
+        },
+      });
+      this.cameras.main.shake(ms, 0.012);
+      return this.wait(ms).then(() => this.setTone("none", 600));
+    }
+    this.tint.setBlendMode(Phaser.BlendModes.MULTIPLY);
+    if (tone === "none") {
+      return new Promise((r) => this.tweens.add({ targets: this.tint, fillAlpha: 0, duration: ms, onComplete: () => r() }));
+    }
+    this.tint.setFillStyle(TONES[tone], this.tint.fillAlpha);
+    return new Promise((r) => this.tweens.add({ targets: this.tint, fillAlpha: 1, duration: ms, onComplete: () => r() }));
+  }
+
+  private wait(ms: number): Promise<void> {
+    return new Promise((r) => this.time.delayedCall(ms, r));
   }
 
   showActor(who: string, at: "left" | "center" | "right"): void {
     const spr = SPEAKERS[who]?.sprite ?? who;
     const x = at === "left" ? GAME_WIDTH * 0.25 : at === "right" ? GAME_WIDTH * 0.75 : GAME_WIDTH * 0.5;
     this.hideActor(who);
+    // 발끝을 대화창 윗선에 맞춘다 (대화창 높이 150)
     const img = this.add
-      .image(x, GROUND_Y, `spr_${spr}`)
+      .image(x, GAME_HEIGHT - 150 + 2, `spr_${spr}`)
       .setOrigin(0.5, 1)
       .setScale(1.5)
       .setScrollFactor(0)
@@ -308,11 +395,14 @@ export class ChapterScene extends Phaser.Scene implements StageHooks {
   }
 
   gotoChapter(id: string): void {
+    this.chaosTimer?.remove(false);
     this.cameras.main.fadeOut(600, 8, 8, 11);
     this.cameras.main.once("camerafadeoutcomplete", () => this.scene.restart({ chapterId: id }));
   }
 
   endGame(): void {
+    this.chaosTimer?.remove(false);
+    this.audio.playBgm(null);
     this.cameras.main.fadeOut(1200, 8, 8, 11);
     this.cameras.main.once("camerafadeoutcomplete", () => this.scene.start("Title"));
   }

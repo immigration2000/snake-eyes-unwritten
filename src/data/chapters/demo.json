@@ -1,0 +1,49 @@
+{
+  "id": "demo",
+  "part": 0,
+  "title": "연출 명령 데모 (개발용)",
+  "bg": "ruin",
+  "bgm": "ch08",
+  "entry": "start",
+  "script": {
+    "start": [
+      { "t": "n", "text": "이 챕터는 M1 에서 추가된 명령을 확인하는 개발용 데모다. ?chapter=demo 로 진입한다." },
+      { "t": "n", "text": "이탤릭: *스네이크 아이즈는 거짓말하지 않는다 — 향한 곳이 달랐을 뿐.* 마커 안쪽이 레드 이탤릭으로 나와야 한다." },
+      { "t": "show", "who": "baelz", "at": "center" },
+      { "t": "s", "who": "baelz", "text": "show 로 등장. 지금은 기본 표정." },
+      { "t": "s", "who": "baelz", "face": "baelz_cold", "text": "…face 로 냉정 표정. 대사와 함께 바뀐다." },
+      { "t": "fx", "kind": "tint", "tone": "cold", "ms": 800 },
+      { "t": "s", "who": "baelz", "text": "tint cold — 화면 전체가 콜드 톤. 13장 두 얼굴용." },
+      { "t": "fx", "kind": "tint", "tone": "warm", "ms": 800 },
+      { "t": "s", "who": "baelz", "face": "baelz", "text": "tint warm — 일상 씬 웜 톤. 표정도 되돌렸다." },
+      { "t": "fx", "kind": "tint", "tone": "none", "ms": 500 },
+      { "t": "s", "who": "baelz", "text": "tint none — 원래대로." },
+      { "t": "fx", "kind": "shake", "ms": 500, "intensity": 0.01 },
+      { "t": "n", "text": "shake — 카메라 흔들림." },
+      { "t": "fx", "kind": "flash", "color": "#ff2c3d", "ms": 400 },
+      { "t": "n", "text": "flash — 레드 플래시." },
+      { "t": "se", "key": "page" },
+      { "t": "n", "text": "se — 효과음 (에셋 없으면 콘솔에 로그만)." },
+      { "t": "hide", "who": "baelz" },
+      { "t": "n", "text": "다음은 8장 폭주용 chaos. 3초간 레드·시안 점멸 + 흔들림 뒤 자동 해제." },
+      { "t": "fx", "kind": "tint", "tone": "chaos", "ms": 3000 },
+      { "t": "bg", "key": "dark" },
+      { "t": "pause", "ms": 1200 },
+      { "t": "n", "text": "bg 교체 + pause 침묵. 여기서 Ctrl 을 누르고 있으면 읽은 줄은 자동으로 넘어간다." },
+      { "t": "cg", "key": "ch08_wish" },
+      { "t": "n", "text": "cg — 삽화 (에셋 없으면 배경으로 대체). L 키로 백로그, Esc 로 메뉴·설정." },
+      { "t": "cg", "key": null },
+      {
+        "t": "choice",
+        "options": [
+          { "text": "처음부터 다시", "goto": "start" },
+          { "text": "끝내기", "goto": "fin" }
+        ]
+      }
+    ],
+    "fin": [
+      { "t": "n", "text": "데모 끝." },
+      { "t": "end" }
+    ]
+  }
+}

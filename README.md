@@ -21,7 +21,9 @@ npm run dev        # http://localhost:5173
 | `npm run validate:script` | 챕터 JSON 정합성 검사 (label/화자/챕터 참조) |
 | `npm run typecheck` | `tsc --noEmit` |
 
-**조작**: `← →` / `A D` 이동 · `E` 상호작용 · `Space` / `Enter` / 클릭 대사 진행 · `1~9` 선택지
+**조작**: `← →` / `A D` 이동 · `E` 상호작용 · `Space` / `Enter` / 클릭 대사 진행 · `1~9` 선택지 · `Ctrl` 읽은 대사 스킵 · `L` / 휠↑ 백로그 · `Esc` 메뉴·설정
+
+`http://localhost:5173/?chapter=ch03` 처럼 챕터로 바로 진입할 수 있다. `?chapter=demo` 는 연출 명령 데모.
 
 `main` 에 push 하면 GitHub Actions 가 GitHub Pages 로 자동 배포한다.
 
@@ -37,9 +39,15 @@ src/
     TitleScene.ts          타이틀 / 새 이야기 / 이어서
     ChapterScene.ts        사이드스크롤 탐색 + 트리거 + VN 연출 훅
   systems/
-    ScriptRunner.ts        챕터 스크립트 인터프리터
+    ScriptRunner.ts        챕터 스크립트 인터프리터 (+ 백로그, Ctrl 스킵)
     DialogueBox.ts         대화창 (타자 효과·선택지)
-    SaveManager.ts         localStorage 세이브 (챕터 체크포인트·플래그)
+    RichText.ts            *이탤릭* 혼합 렌더
+    AudioManager.ts        BGM 크로스페이드 · SE
+    SaveManager.ts         localStorage 세이브 (챕터 체크포인트·플래그·읽은 줄)
+    Settings.ts            텍스트 속도 · 볼륨
+  ui/
+    Overlay.ts             Esc 메뉴 · 백로그 · 설정
+    NameInput.ts           이름 입력 (DOM)
   data/
     types.ts               스크립트 명령 타입
     chapters/chNN.json     챕터별 스크립트 (스토리 데이터)

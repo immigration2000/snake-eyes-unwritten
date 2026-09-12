@@ -1,10 +1,11 @@
 import Phaser from "phaser";
 import { FONTS, GAME_HEIGHT, GAME_WIDTH, PALETTE, PALETTE_CSS, SPEAKERS } from "@/config";
 import type { ChoiceOption } from "@/data/types";
+import { RichText } from "./RichText";
+import { Settings } from "./Settings";
 
 const BOX_H = 150;
 const PAD = 28;
-const CPS = 40; // 타자 속도 (글자/초)
 
 /**
  * 하단 대화창. 나레이션/대사 타자 효과 + 선택지.
@@ -14,12 +15,12 @@ export class DialogueBox {
   private scene: Phaser.Scene;
   private root: Phaser.GameObjects.Container;
   private nameText: Phaser.GameObjects.Text;
-  private bodyText: Phaser.GameObjects.Text;
+  private body: RichText;
   private cursor: Phaser.GameObjects.Text;
   private choiceRoot: Phaser.GameObjects.Container;
   private typing?: Phaser.Time.TimerEvent;
-  private fullText = "";
   private shown = 0;
+  private settings = Settings.get();
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
@@ -37,29 +38,33 @@ export class DialogueBox {
       color: PALETTE_CSS.bone,
     });
 
-    this.bodyText = scene.add.text(PAD, 42, "", {
-      fontFamily: FONTS.body,
-      fontSize: "19px",
-      color: PALETTE_CSS.bone,
-      lineSpacing: 8,
-      wordWrap: { width: GAME_WIDTH - PAD * 2, useAdvancedWrap: true },
-    });
+    this.body = new RichText(
+      scene,
+      PAD,
+      42,
+      GAME_WIDTH - PAD * 2,
+      { fontFamily: FONTS.body, fontSize: "19px", color: PALETTE_CSS.bone },
+      PALETTE_CSS.baelzRed,
+    );
 
-    this.cursor = scene.add.text(GAME_WIDTH - PAD, BOX_H - 22, "▼", {
-      fontFamily: FONTS.mono,
-      fontSize: "12px",
-      color: PALETTE_CSS.bone,
-    }).setOrigin(1, 0.5).setVisible(false);
+    this.cursor = scene.add
+      .text(GAME_WIDTH - PAD, BOX_H - 22, "▼", { fontFamily: FONTS.mono, fontSize: "12px", color: PALETTE_CSS.bone })
+      .setOrigin(1, 0.5)
+      .setVisible(false);
     scene.tweens.add({ targets: this.cursor, y: BOX_H - 18, duration: 500, yoyo: true, repeat: -1 });
 
     this.choiceRoot = scene.add.container(0, 0);
 
-    this.root = scene.add.container(0, y, [bg, this.nameText, this.bodyText, this.cursor, this.choiceRoot]);
+    this.root = scene.add.container(0, y, [bg, this.nameText, this.body.container, this.cursor, this.choiceRoot]);
     this.root.setDepth(1000).setScrollFactor(0).setVisible(false);
   }
 
   get visible(): boolean {
     return this.root.visible;
+  }
+
+  get isTyping(): boolean {
+    return !!this.typing && this.shown < this.body.total;
   }
 
   show(): void {
@@ -72,8 +77,8 @@ export class DialogueBox {
     this.clearChoices();
   }
 
-  /** 텍스트 표시 시작. 완료되면 resolve. */
-  say(who: string | null, text: string): Promise<void> {
+  /** 텍스트 표시 시작. 타자가 끝나면 resolve. instant 면 즉시 전체 표시. */
+  say(who: string | null, text: string, instant = false): Promise<void> {
     this.show();
     this.clearChoices();
     const spk = who ? SPEAKERS[who] : null;
@@ -82,21 +87,26 @@ export class DialogueBox {
     } else {
       this.nameText.setVisible(false);
     }
-    // 이탤릭 마커 *...* 는 M1 에서 레드 이탤릭으로 렌더 예정. 지금은 마커만 제거.
-    this.fullText = text.replace(/\*(.+?)\*/g, "$1");
+    this.stopTyping();
+    this.body.setContent(text);
     this.shown = 0;
-    this.bodyText.setText("");
     this.cursor.setVisible(false);
+
+    const cps = this.settings.data.textSpeed;
+    if (instant || cps >= 999 || this.body.total === 0) {
+      this.finishTyping();
+      return Promise.resolve();
+    }
 
     return new Promise((resolve) => {
       this.typing = this.scene.time.addEvent({
-        delay: 1000 / CPS,
-        repeat: this.fullText.length - 1,
+        delay: 1000 / cps,
+        repeat: this.body.total - 1,
         callback: () => {
           this.shown++;
-          this.bodyText.setText(this.fullText.slice(0, this.shown));
-          if (this.shown >= this.fullText.length) {
-            this.cursor.setVisible(true);
+          this.body.reveal(this.shown);
+          if (this.shown >= this.body.total) {
+            this.finishTyping();
             resolve();
           }
         },
@@ -106,11 +116,8 @@ export class DialogueBox {
 
   /** 타자 중이면 즉시 전체 표시. 이미 다 보였으면 false 반환. */
   skipTyping(): boolean {
-    if (this.typing && this.shown < this.fullText.length) {
-      this.stopTyping();
-      this.shown = this.fullText.length;
-      this.bodyText.setText(this.fullText);
-      this.cursor.setVisible(true);
+    if (this.isTyping) {
+      this.finishTyping();
       return true;
     }
     return false;
@@ -120,39 +127,42 @@ export class DialogueBox {
     this.show();
     this.cursor.setVisible(false);
     this.clearChoices();
-    this.bodyText.setVisible(false);
+    this.body.setVisible(false);
     return new Promise((resolve) => {
       const startY = 44;
-      options.forEach((opt, i) => {
-        const t = this.scene.add.text(PAD + 16, startY + i * 30, `${i + 1}. ${opt.text}`, {
-          fontFamily: FONTS.body,
-          fontSize: "18px",
-          color: PALETTE_CSS.bone,
-        }).setInteractive({ useHandCursor: true });
-        t.on("pointerover", () => t.setColor(PALETTE_CSS.baelzRed));
-        t.on("pointerout", () => t.setColor(PALETTE_CSS.bone));
-        t.on("pointerdown", () => {
-          this.clearChoices();
-          resolve(opt);
-        });
-        this.choiceRoot.add(t);
-      });
-      // 숫자키로도 선택
+      const kb = this.scene.input.keyboard;
       const keyHandler = (e: KeyboardEvent) => {
         const n = parseInt(e.key, 10);
-        if (n >= 1 && n <= options.length) {
-          this.scene.input.keyboard?.off("keydown", keyHandler);
-          this.clearChoices();
-          resolve(options[n - 1]);
-        }
+        if (n >= 1 && n <= options.length) pick(options[n - 1]);
       };
-      this.scene.input.keyboard?.on("keydown", keyHandler);
+      const pick = (opt: ChoiceOption) => {
+        kb?.off("keydown", keyHandler);
+        this.clearChoices();
+        resolve(opt);
+      };
+      options.forEach((opt, i) => {
+        const t = this.scene.add
+          .text(PAD + 16, startY + i * 30, `${i + 1}. ${opt.text}`, { fontFamily: FONTS.body, fontSize: "18px", color: PALETTE_CSS.bone })
+          .setInteractive({ useHandCursor: true });
+        t.on("pointerover", () => t.setColor(PALETTE_CSS.baelzRed));
+        t.on("pointerout", () => t.setColor(PALETTE_CSS.bone));
+        t.on("pointerdown", () => pick(opt));
+        this.choiceRoot.add(t);
+      });
+      kb?.on("keydown", keyHandler);
     });
+  }
+
+  private finishTyping(): void {
+    this.stopTyping();
+    this.shown = this.body.total;
+    this.body.revealAll();
+    this.cursor.setVisible(true);
   }
 
   private clearChoices(): void {
     this.choiceRoot.removeAll(true);
-    this.bodyText.setVisible(true);
+    this.body.setVisible(true);
   }
 
   private stopTyping(): void {
