@@ -55,9 +55,15 @@ export class AudioManager {
       return;
     }
     const next = this.sound.add(cacheKey, { loop: true, volume: 0 });
-    next.play();
     this.current = next;
-    this.scene.tweens.add({ targets: next, volume: this.settings.data.bgmVolume, duration: FADE_MS });
+    // 브라우저 자동재생 정책: 첫 입력 전엔 잠겨 있으므로 풀린 뒤 시작
+    const start = () => {
+      if (this.current !== next) return; // 그 사이 곡이 바뀜
+      next.play();
+      this.scene.tweens.add({ targets: next, volume: this.settings.data.bgmVolume, duration: FADE_MS });
+    };
+    if (this.sound.locked) this.sound.once(Phaser.Sound.Events.UNLOCKED, start);
+    else start();
   }
 
   playSe(key: string): void {
@@ -66,6 +72,7 @@ export class AudioManager {
       console.info(`[se] 에셋 없음, 건너뜀: ${key}`);
       return;
     }
+    if (this.sound.locked) return;
     this.sound.play(cacheKey, { volume: this.settings.data.seVolume });
   }
 

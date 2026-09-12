@@ -21,9 +21,11 @@ npm run dev        # http://localhost:5173
 | `npm run dev` | 개발 서버 |
 | `npm run build` | 타입체크 + 프로덕션 빌드 (`dist/`) |
 | `npm run validate:script` | 챕터 JSON 정합성 검사 (label/화자/챕터 참조) |
+| `python scripts/gen_assets.py` | 에셋 생성 (diffusers, GPU) — [가이드](docs/05_에셋_가이드.md) |
+| `python scripts/prep_assets.py` | 생성물 규격화 + `manifest.json` 등록 |
 | `npm run typecheck` | `tsc --noEmit` |
 
-**조작**: `← →` / `A D` 이동 · `E` 상호작용 · `Space` / `Enter` / 클릭 대사 진행 · `1~9` 선택지 · `Ctrl` 읽은 대사 스킵 · `L` / 휠↑ 백로그 · `Esc` 메뉴·설정
+**조작**: 터치 — 화면 탭 진행, ◀ ▶ ● 버튼 · 키보드 — `← →` / `A D` 이동 · `E` 상호작용 · `Space` / `Enter` / 클릭 대사 진행 · `1~9` 선택지 · `Ctrl` 읽은 대사 스킵 · `L` / 휠↑ 백로그 · `Esc` 메뉴·설정
 
 `http://localhost:5173/?chapter=ch03` 처럼 챕터로 바로 진입할 수 있다. `?chapter=demo` 는 연출 명령 데모.
 
@@ -66,6 +68,7 @@ scripts/validate-chapters.mjs
 | [02_개발계획_로드맵.md](docs/02_개발계획_로드맵.md) | 마일스톤 M0~M5, 작업 순서, 완료 기준 |
 | [03_기술설계.md](docs/03_기술설계.md) | 엔진 선택 이유, 아키텍처, 씬/시스템 책임 |
 | [04_스크립트_포맷.md](docs/04_스크립트_포맷.md) | 챕터 JSON 작성법 (소설 → 스크립트 변환 규칙) |
+| [05_에셋_가이드.md](docs/05_에셋_가이드.md) | 에셋 규격·생성·등록 파이프라인 |
 
 ## 저작권
 

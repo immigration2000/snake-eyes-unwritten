@@ -7,6 +7,7 @@ import { DialogueBox } from "@/systems/DialogueBox";
 import { ScriptRunner, type StageHooks } from "@/systems/ScriptRunner";
 import { SaveManager } from "@/systems/SaveManager";
 import { Overlay } from "@/ui/Overlay";
+import { TouchControls, isTouchDevice } from "@/ui/TouchControls";
 
 const GROUND_Y = 450;
 const PLAYER_SPEED = 170;
@@ -44,6 +45,7 @@ export class ChapterScene extends Phaser.Scene implements StageHooks {
   private overlay!: Overlay;
   private tint!: Phaser.GameObjects.Rectangle;
   private chaosTimer?: Phaser.Time.TimerEvent;
+  private touch?: TouchControls;
 
   constructor() {
     super("Chapter");
@@ -59,6 +61,7 @@ export class ChapterScene extends Phaser.Scene implements StageHooks {
     this.nearest = null;
     this.player = undefined;
     this.cg = undefined;
+    this.touch = undefined;
   }
 
   create(): void {
@@ -91,6 +94,8 @@ export class ChapterScene extends Phaser.Scene implements StageHooks {
       onTitle: () => this.scene.start("Title"),
     });
 
+    if (ch.world && isTouchDevice()) this.touch = new TouchControls(this, () => this.tryInteract());
+
     this.buildHud();
     void this.showTitleCard().then(() => {
       if (ch.entry) void this.runner.run(ch.entry);
@@ -101,13 +106,15 @@ export class ChapterScene extends Phaser.Scene implements StageHooks {
     if (!this.player || !this.cursors || !this.keys) return;
     const body = this.player.body as Phaser.Physics.Arcade.Body;
 
-    if (this.runner.running || this.overlay.isOpen) {
+    const locked = this.runner.running || this.overlay.isOpen;
+    this.touch?.setVisible(!locked);
+    if (locked) {
       body.setVelocityX(0);
       return;
     }
 
-    const left = this.cursors.left.isDown || this.keys.a.isDown;
-    const right = this.cursors.right.isDown || this.keys.d.isDown;
+    const left = this.cursors.left.isDown || this.keys.a.isDown || !!this.touch?.left.isDown;
+    const right = this.cursors.right.isDown || this.keys.d.isDown || !!this.touch?.right.isDown;
     body.setVelocityX(left ? -PLAYER_SPEED : right ? PLAYER_SPEED : 0);
     if (left) this.player.setFlipX(true);
     if (right) this.player.setFlipX(false);
@@ -118,8 +125,9 @@ export class ChapterScene extends Phaser.Scene implements StageHooks {
   // ---------- 월드 구성 ----------
 
   private buildWorld(width: number, spawn: number): void {
-    // 나무 실루엣 (중간 패럴랙스)
-    for (let x = 40; x < width; x += 90 + ((x * 7) % 60)) {
+    // 나무 실루엣 (중간 패럴랙스) — 배경이 플레이스홀더일 때만
+    const placeholders = (this.registry.get("placeholders") as string[] | undefined) ?? [];
+    for (let x = 40; placeholders.includes(`bg_${this.chapter.bg}`) && x < width; x += 90 + ((x * 7) % 60)) {
       this.add.image(x, GROUND_Y + 8, "prop_tree").setOrigin(0.5, 1).setScrollFactor(0.6).setAlpha(0.7).setDepth(1);
     }
     // 바닥
@@ -208,7 +216,9 @@ export class ChapterScene extends Phaser.Scene implements StageHooks {
       .setDepth(900);
 
     {
-      const hint = ch.world ? "← → 이동 · E 상호작용 · Space 진행 · L 로그 · Esc 메뉴" : "Space 진행 · Ctrl 스킵 · L 로그 · Esc 메뉴";
+      const hint = isTouchDevice()
+        ? ch.world ? "◀ ▶ 이동 · ● 상호작용 · 탭 진행" : "탭 진행"
+        : ch.world ? "← → 이동 · E 상호작용 · Space 진행 · L 로그 · Esc 메뉴" : "Space 진행 · Ctrl 스킵 · L 로그 · Esc 메뉴";
       this.add
         .text(GAME_WIDTH - 16, 12, hint, {
           fontFamily: FONTS.mono,

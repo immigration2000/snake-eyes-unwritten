@@ -16,12 +16,13 @@ export class BootScene extends Phaser.Scene {
     const base = import.meta.env.BASE_URL;
     this.load.json("manifest", `${base}assets/manifest.json`);
     this.load.once("filecomplete-json-manifest", () => {
-      const m = this.cache.json.get("manifest") as Partial<Record<"bg" | "sprites" | "cg" | "audio" | "se", string[]>>;
+      const m = this.cache.json.get("manifest") as Partial<Record<"bg" | "sprites" | "cg" | "audio" | "se" | "ui", string[]>>;
       for (const k of m.bg ?? []) this.load.image(`bg_${k}`, `${base}assets/bg/${k}.png`);
       for (const k of m.sprites ?? []) this.load.image(`spr_${k}`, `${base}assets/sprites/${k}.png`);
       for (const k of m.cg ?? []) this.load.image(`cg_${k}`, `${base}assets/cg/${k}.png`);
       for (const k of m.audio ?? []) this.load.audio(`bgm_${k}`, `${base}assets/audio/${k}.mp3`);
       for (const k of m.se ?? []) this.load.audio(`se_${k}`, `${base}assets/audio/se/${k}.mp3`);
+      for (const k of m.ui ?? []) this.load.image(`ui_${k}`, `${base}assets/ui/${k}.png`);
     });
   }
 
@@ -38,6 +39,8 @@ export class BootScene extends Phaser.Scene {
 
   private makePlaceholders(): void {
     const g = this.make.graphics({ x: 0, y: 0 }, false);
+    const made: string[] = [];
+    this.registry.set("placeholders", made);
 
     // 배경: 키별 톤 (§9-1: 일상=웜, 진실=콜드)
     const bgTone: Record<string, [number, number]> = {
@@ -67,6 +70,7 @@ export class BootScene extends Phaser.Scene {
         g.fillRect(0, i * 20, 960, 20);
       }
       g.generateTexture(`bg_${key}`, 960, 540);
+      made.push(`bg_${key}`);
     }
 
     // 캐릭터 실루엣 (64×96, 게임 내 1.5배 확대)
@@ -105,6 +109,7 @@ export class BootScene extends Phaser.Scene {
       g.fillStyle(c.accent, 1);
       g.fillRect(20, top + 8, 24, 4); // 액센트 라인 (눈/가면 위치)
       g.generateTexture(`spr_${key}`, w, 96);
+      made.push(`spr_${key}`);
     }
 
     // 바닥 타일 + 나무 실루엣

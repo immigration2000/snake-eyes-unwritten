@@ -2,18 +2,29 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>SNAKE EYES — 아무도 적지 않은 나라</title>
+    <meta name="description" content="세상이 멸망의 징조라 부른 뱀눈의 아이가 어떻게 마왕이 되었고, 아무도 쫓겨나지 않는 나라를 세웠는지 — 떠돌이 기록자의 시선으로 다시 쓰는 다크 페어리테일. hololive Hakos Baelz 비영리 팬게임." />
+    <meta name="theme-color" content="#08080b" />
+    <meta property="og:title" content="SNAKE EYES — 아무도 적지 않은 나라" />
+    <meta property="og:description" content="2D 픽셀 내러티브 어드벤처 · 비영리 팬게임" />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2308080b'/%3E%3Ccircle cx='22' cy='32' r='7' fill='%23ff2c3d'/%3E%3Ccircle cx='42' cy='32' r='7' fill='%23ff2c3d'/%3E%3Crect x='20.5' y='25' width='3' height='14' rx='1.5' fill='%2308080b'/%3E%3Crect x='40.5' y='25' width='3' height='14' rx='1.5' fill='%2308080b'/%3E%3C/svg%3E" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600&family=Space+Mono&family=Unbounded:wght@600&display=swap" rel="stylesheet" />
     <style>
-      html, body { margin: 0; padding: 0; background: #08080b; height: 100%; overflow: hidden; }
+      html, body { margin: 0; padding: 0; background: #08080b; height: 100%; overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; }
       #game { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
       canvas { image-rendering: pixelated; image-rendering: crisp-edges; }
+      /* 좁은 세로 화면: 가로 회전 안내 */
+      #rotate { display: none; position: fixed; inset: 0; background: #08080b; color: #ece3dd; z-index: 20;
+        align-items: center; justify-content: center; text-align: center; font-family: "Noto Serif KR", serif; font-size: 18px; line-height: 1.8; }
+      @media (orientation: portrait) and (max-width: 700px) { #rotate { display: flex; } }
     </style>
   </head>
   <body>
     <div id="game"></div>
+    <div id="rotate"><div><span style="font-size:36px">⟳</span><br />화면을 가로로 돌려 주세요</div></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

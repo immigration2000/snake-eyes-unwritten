@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { FONTS, GAME_HEIGHT, GAME_WIDTH, PALETTE_CSS } from "@/config";
+import { FONTS, GAME_HEIGHT, GAME_WIDTH, PALETTE, PALETTE_CSS } from "@/config";
 import { CHAPTERS, getChapter } from "@/data";
 import { AudioManager } from "@/systems/AudioManager";
 import { SaveManager } from "@/systems/SaveManager";
@@ -26,7 +26,14 @@ export class TitleScene extends Phaser.Scene {
     }
 
     AudioManager.get(this).playBgm("main_theme");
-    this.add.image(cx, GAME_HEIGHT / 2, "bg_forest").setAlpha(0.6);
+
+    if (this.textures.exists("ui_title")) {
+      // 실제 타이틀 아트 (assets/ui/title.png, 960×540)
+      this.add.image(cx, GAME_HEIGHT / 2, "ui_title").setDisplaySize(GAME_WIDTH, GAME_HEIGHT);
+    } else {
+      this.add.image(cx, GAME_HEIGHT / 2, "bg_forest").setAlpha(0.6);
+      this.drawSnakeEyes(cx, 92);
+    }
 
     this.add.text(cx, 150, "SNAKE EYES", { fontFamily: FONTS.display, fontSize: "56px", color: PALETTE_CSS.baelzRed }).setOrigin(0.5);
     this.add.text(cx, 215, "아무도 적지 않은 나라", { fontFamily: FONTS.body, fontSize: "24px", color: PALETTE_CSS.bone }).setOrigin(0.5);
@@ -87,6 +94,20 @@ export class TitleScene extends Phaser.Scene {
     this.add
       .text(cx, GAME_HEIGHT - 28, "비영리 팬 창작 · hololive / Hakos Baelz · 2차 창작 가이드라인 준수", { fontFamily: FONTS.mono, fontSize: "11px", color: PALETTE_CSS.mute })
       .setOrigin(0.5);
+  }
+
+  /** 플레이스홀더 타이틀 모티프: 주사위 1·1(스네이크 아이즈)을 뱀눈으로 */
+  private drawSnakeEyes(cx: number, cy: number): void {
+    const g = this.add.graphics();
+    for (const dx of [-34, 34]) {
+      g.fillStyle(PALETTE.baelzRed, 0.12);
+      g.fillCircle(cx + dx, cy, 30);
+      g.fillStyle(PALETTE.baelzRed, 0.95);
+      g.fillCircle(cx + dx, cy, 15);
+      g.fillStyle(PALETTE.ink, 1);
+      g.fillRoundedRect(cx + dx - 2.5, cy - 12, 5, 24, 2.5);
+    }
+    this.tweens.add({ targets: g, alpha: 0.75, duration: 2400, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
   }
 
   /** 엔딩 후 열리는 챕터 선택. 플래그는 유지되므로 14장만 다시 골라 다른 엔딩을 볼 수 있다. */
